@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - AI Debate Arena</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">AI Debate Arena</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-app">
+            <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+            <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="/home" class="nav-link"><span>Home</span></a>
+                <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+                <a href="/teacher-dashboard" class="nav-link" id="nav-my-classes" style="display: none;"><span>My Classes</span></a>
+                <a href="/history" class="nav-link"><span>History</span></a>
+                <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+                <a href="/competition" class="nav-link"><span>Competition</span></a>
+                <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+                <a href="/profile" class="nav-link"><span>Profile</span></a>
+            </nav>
+
+            <div id="main-content" role="main">
+                <div id="debate-setup" class="generator-card">
+                    <div class="card-header">
+                        <h2>AI Debate Arena</h2>
+                        <p>Challenge the AI to a 3-round debate on any topic. Sharpen your reasoning and argumentation skills!</p>
+                    </div>
+                    <div class="generator-form">
+                        <div class="form-row-full">
+                            <label for="debate-topic">Debate Topic</label>
+                            <input type="text" id="debate-topic" placeholder="e.g., 'Should space exploration be prioritized over ocean exploration?'" required aria-required="true">
+                            <small>Enter a debatable topic — the AI will randomly assign sides</small>
+                        </div>
+                        <button onclick="startDebate()" id="start-debate-btn" class="btn-generate">Start Debate</button>
+                        <div id="start-error" class="error" aria-live="assertive"></div>
+                    </div>
+                </div>
+
+                <div id="debate-active" style="display:none;">
+                    <div class="debate-topic-header" id="debate-topic-header"></div>
+
+                    <div class="debate-chat" id="debate-chat"></div>
+
+                    <div id="debate-input-area" class="debate-input-area">
+                        <div class="debate-round-indicator" id="debate-round-indicator">Round 1 of 3</div>
+                        <textarea id="debate-argument" rows="4" placeholder="Type your argument here..." aria-label="Your argument"></textarea>
+                        <div class="debate-input-actions">
+                            <button onclick="submitArgument()" id="submit-arg-btn" class="btn-generate">Submit Argument</button>
+                            <button onclick="endDebate()" id="end-debate-btn" class="secondary-btn" style="display:none;">End Debate</button>
+                        </div>
+                        <div id="debate-error" class="error" aria-live="assertive"></div>
+                    </div>
+                </div>
+
+                <div id="debate-scorecard" class="debate-scorecard" style="display:none;"></div>
+
+                <div id="past-debates" class="past-debates-section" style="display:none;">
+                    <h3>Past Debates</h3>
+                    <div id="past-debates-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/debate-arena.js"></script>
+</body>
+</html>

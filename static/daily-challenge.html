@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Daily Challenge</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link active"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div id="loading-state" class="loading">Loading today's challenge...</div>
+
+            <div id="challenge-header" class="daily-challenge-header" style="display:none;">
+                <div class="daily-challenge-banner">
+                    <div class="daily-challenge-icon" aria-hidden="true">&#x1F4C5;</div>
+                    <div>
+                        <h2>Daily Challenge</h2>
+                        <p id="challenge-date"></p>
+                    </div>
+                </div>
+                <div id="challenge-timer" class="daily-challenge-timer" aria-live="polite">
+                    <span id="timer-display">00:00</span>
+                </div>
+            </div>
+
+            <div id="already-completed" style="display:none;">
+                <div class="daily-completed-card">
+                    <div class="daily-completed-icon" aria-hidden="true">&#x2705;</div>
+                    <h3>You've already completed today's challenge!</h3>
+                    <div class="daily-completed-stats" aria-live="polite">
+                        <div class="stat-item">
+                            <div class="stat-value" id="result-score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="result-correct">0/5</div>
+                            <div class="stat-label">Correct</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="result-time">0s</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                    <p class="daily-completed-message">Come back tomorrow for a new challenge!</p>
+                </div>
+            </div>
+
+            <div id="questions-area" style="display:none;">
+                <div class="daily-progress-bar">
+                    <div class="daily-progress-fill" id="progress-fill" style="width:0%"></div>
+                </div>
+                <div class="daily-progress-text" aria-live="polite">
+                    Question <span id="current-q-num">1</span> of <span id="total-q-num">5</span>
+                </div>
+
+                <div id="question-card" class="daily-question-card">
+                    <div class="question-meta" id="question-topic"></div>
+                    <div class="question-text" id="question-text"></div>
+                    <div class="daily-answer-input">
+                        <input type="text" id="answer-input" placeholder="Type your answer..." autocomplete="off" aria-label="Your answer">
+                        <button id="submit-answer-btn" onclick="submitAnswer()">Submit</button>
+                    </div>
+                    <div id="answer-feedback" class="daily-feedback" style="display:none;" aria-live="assertive"></div>
+                    <button id="next-btn" class="daily-next-btn" style="display:none;" onclick="nextQuestion()" type="button">Next Question</button>
+                </div>
+            </div>
+
+            <div id="final-results" style="display:none;">
+                <div class="daily-results-card" aria-live="polite">
+                    <h2>Challenge Complete!</h2>
+                    <div class="daily-completed-stats">
+                        <div class="stat-item">
+                            <div class="stat-value" id="final-score">0</div>
+                            <div class="stat-label">Score</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="final-correct">0/5</div>
+                            <div class="stat-label">Correct</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value" id="final-time">0s</div>
+                            <div class="stat-label">Time</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="leaderboard-section" style="display:none;">
+                <div class="daily-leaderboard-card">
+                    <h3>Today's Leaderboard</h3>
+                    <div id="leaderboard-list" class="daily-leaderboard-list" aria-live="polite"></div>
+                    <div id="leaderboard-empty" class="empty-state" style="display:none;">
+                        <p>No one has completed today's challenge yet. Be the first!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/daily-challenge.js"></script>
+</body>
+</html>

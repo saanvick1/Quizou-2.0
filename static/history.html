@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - History & Review</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link active"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="history-subtabs">
+                <button class="history-subtab active" onclick="switchHistoryTab('history', this)" type="button">Question History</button>
+                <button class="history-subtab" onclick="switchHistoryTab('review', this)" type="button">Missed Questions</button>
+                <button class="history-subtab" onclick="switchHistoryTab('stats', this)" type="button">Performance Stats</button>
+            </div>
+
+            <div id="tab-history" class="history-tab-content">
+                <div id="stats-container" aria-live="polite"></div>
+                <div id="cognitive-analytics-container" aria-live="polite"></div>
+                <div class="history-section">
+                    <div class="history-header">
+                        <h3>Question History</h3>
+                        <div class="history-filters">
+                            <div class="filter-group">
+                                <label for="topic-filter">Filter by Topic:</label>
+                                <select id="topic-filter" onchange="applyFilters()">
+                                    <option value="all">All Topics</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="difficulty-filter">Filter by Difficulty:</label>
+                                <select id="difficulty-filter" onchange="applyFilters()">
+                                    <option value="all">All Difficulties</option>
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="history-container" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div id="tab-review" class="history-tab-content" style="display:none;">
+                <div class="missed-questions-page">
+                    <div class="page-header">
+                        <div>
+                            <h2>Missed Questions Review</h2>
+                            <p>Questions you answered incorrectly — <span id="missed-count">0</span> found</p>
+                        </div>
+                    </div>
+                    <div class="filter-bar">
+                        <div class="filter-group">
+                            <label for="missed-topic-filter">Topic:</label>
+                            <select id="missed-topic-filter" onchange="applyMissedFilters()">
+                                <option value="all">All Topics</option>
+                            </select>
+                        </div>
+                        <div class="filter-group">
+                            <label for="missed-difficulty-filter">Difficulty:</label>
+                            <select id="missed-difficulty-filter" onchange="applyMissedFilters()">
+                                <option value="all">All Difficulties</option>
+                                <option value="Easy">Easy</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Hard">Hard</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="missed-questions-container" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div id="tab-stats" class="history-tab-content" style="display:none;">
+                <div id="perf-loading" class="loading">Loading performance data...</div>
+                <div id="perf-content" style="display:none;">
+                    <div id="perf-overall-stats"></div>
+                    <div class="perf-section">
+                        <h3>Difficulty Breakdown</h3>
+                        <div id="perf-difficulty-breakdown"></div>
+                    </div>
+                    <div class="perf-section">
+                        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+                            <h3>Per-Topic Breakdown</h3>
+                            <select id="perf-sort" onchange="sortPerfTopics(this.value)" aria-label="Sort topics by">
+                                <option value="accuracy">Sort by Accuracy</option>
+                                <option value="total">Sort by Questions</option>
+                            </select>
+                        </div>
+                        <div id="perf-topic-breakdown"></div>
+                    </div>
+                    <div class="perf-section">
+                        <h3>Recent Activity</h3>
+                        <div id="perf-recent-activity"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/history.js"></script>
+</body>
+</html>

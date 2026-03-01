@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Profile</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link active"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>Personal Information</h2>
+                    <p>All fields are optional - add as much or as little as you'd like</p>
+                </div>
+                
+                <div class="generator-form">
+                    <div class="form-row-full">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" placeholder="Enter your full name (optional)" autocomplete="name">
+                    </div>
+
+                    <div class="form-row-full">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" placeholder="your.email@example.com (optional)" autocomplete="email">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="grade">Grade Level</label>
+                            <select id="grade">
+                                <option value="">Select grade (optional)</option>
+                                <option value="6th">6th Grade</option>
+                                <option value="7th">7th Grade</option>
+                                <option value="8th">8th Grade</option>
+                                <option value="9th">9th Grade</option>
+                                <option value="10th">10th Grade</option>
+                                <option value="11th">11th Grade</option>
+                                <option value="12th">12th Grade</option>
+                                <option value="college">College</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="school">School</label>
+                            <input type="text" id="school" placeholder="School name (optional)">
+                        </div>
+                    </div>
+
+                    <div class="form-row-full">
+                        <label for="bio">About Me</label>
+                        <textarea id="bio" rows="4" placeholder="Tell us about yourself, your interests, or your Scholar Bowl goals (optional)"></textarea>
+                    </div>
+
+                    <button onclick="saveProfile()" id="save-btn" class="btn-generate">
+                        Save Profile
+                    </button>
+                    <div id="profile-message" class="success-message" aria-live="polite"></div>
+                    <div id="profile-error" class="error" aria-live="assertive"></div>
+                </div>
+            </div>
+
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>Share Your Statistics</h2>
+                    <p>Send a detailed breakdown of your performance by topic and difficulty to any email address</p>
+                </div>
+                
+                <div class="form-row-full">
+                    <label for="recipient-email">Recipient Email Address</label>
+                    <input type="email" id="recipient-email" placeholder="Enter email address to share stats" autocomplete="email">
+                </div>
+                
+                <button onclick="sendStatsByEmail()" id="send-btn" class="btn-generate" style="margin-top: 20px;">
+                    Send Statistics
+                </button>
+                <div id="email-message" class="success-message" aria-live="polite"></div>
+                <div id="email-error" class="error" aria-live="assertive"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/profile.js"></script>
+</body>
+</html>

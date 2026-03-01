@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - AI Question Writer Workshop</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="qw-tabs">
+                <button class="qw-tab active" onclick="switchTab('write')" type="button">Write Question</button>
+                <button class="qw-tab" onclick="switchTab('history')" type="button">My Submissions</button>
+            </div>
+
+            <div id="tab-write">
+                <div class="generator-card">
+                    <div class="card-header">
+                        <h2>AI Question Writer Workshop</h2>
+                        <p>Write your own NAQT-style question and get AI feedback on structure, clue progression, and difficulty alignment.</p>
+                    </div>
+
+                    <div class="generator-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="qw-topic">Topic</label>
+                                <input type="text" id="qw-topic" placeholder="e.g., American History, Biology, Literature">
+                            </div>
+                            <div class="form-group">
+                                <label for="qw-difficulty">Target Difficulty</label>
+                                <select id="qw-difficulty">
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row-full">
+                            <label for="qw-question">Your Question</label>
+                            <textarea id="qw-question" rows="8" placeholder="Write your pyramidal toss-up question here. Start with harder, more obscure clues and progress to easier, more well-known clues..."></textarea>
+                            <small>Aim for 4-6 sentences with progressively easier clues. End with "For 10 points, name..."</small>
+                        </div>
+
+                        <div class="form-row-full">
+                            <label for="qw-answer">Answer</label>
+                            <input type="text" id="qw-answer" placeholder="e.g., Photosynthesis / The Great Gatsby">
+                            <small>Include acceptable alternate answers separated by /</small>
+                        </div>
+
+                        <button onclick="submitQuestion()" id="qw-submit-btn" class="btn-generate">
+                            Submit for AI Review
+                        </button>
+                        <div id="qw-error" class="error" aria-live="assertive"></div>
+                    </div>
+                </div>
+
+                <div id="qw-feedback" class="qw-feedback-container" style="display: none;">
+                    <div class="qw-report-card">
+                        <div class="qw-report-header">
+                            <h2>AI Feedback Report</h2>
+                            <div class="qw-overall-score" id="qw-overall-score">0</div>
+                            <div class="qw-score-label">Overall Score</div>
+                        </div>
+                        <div class="qw-criteria-grid" id="qw-criteria-grid"></div>
+                        <div class="qw-detailed-feedback" id="qw-detailed-feedback"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-history" style="display: none;">
+                <div class="generator-card">
+                    <div class="card-header">
+                        <h2>My Submissions</h2>
+                        <p>Review your past question submissions and AI feedback</p>
+                    </div>
+                    <div id="qw-history-list" class="qw-history-list">
+                        <div class="loading">Loading submissions...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/question-writer.js"></script>
+</body>
+</html>

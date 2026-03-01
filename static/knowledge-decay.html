@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Knowledge Decay Tracker</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="page-header">
+                <div>
+                    <h2>Knowledge Decay Tracker</h2>
+                    <p>Track how well you retain topics over time</p>
+                </div>
+            </div>
+
+            <div id="review-plan-section" class="decay-review-plan" style="display: none;">
+                <h3>Today's Review Plan</h3>
+                <p class="decay-review-subtitle">Topics due for review, sorted by urgency</p>
+                <div id="review-plan-list" class="decay-review-list"></div>
+            </div>
+
+            <div id="decay-loading" class="loading">Loading your knowledge health...</div>
+
+            <div id="decay-empty" class="empty-state" style="display: none;">
+                <div class="empty-icon">📚</div>
+                <h3>No Practice Data Yet</h3>
+                <p>Start practicing topics on the <a href="/home">Home page</a> to track your knowledge retention.</p>
+            </div>
+
+            <div id="decay-grid" class="decay-topics-grid"></div>
+        </div>
+    </div>
+
+    <script src="/static/knowledge-decay.js"></script>
+</body>
+</html>

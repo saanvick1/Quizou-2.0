@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Flashcards</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link active"><span>Flashcards</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div id="flashcard-setup">
+                <h2>Flashcard Study Mode</h2>
+                <p style="color: #92400e; margin-bottom: 20px;">Review questions in flashcard format. Flip cards to reveal answers and track your progress.</p>
+
+                <div class="flashcard-filters">
+                    <div class="filter-group">
+                        <label for="filter-select">Question Filter:</label>
+                        <select id="filter-select">
+                            <option value="all">All Questions</option>
+                            <option value="missed">Only Missed</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="topic-select">Topic:</label>
+                        <select id="topic-select">
+                            <option value="">All Topics</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="shuffle-label">
+                            <input type="checkbox" id="shuffle-toggle" checked>
+                            Shuffle Cards
+                        </label>
+                    </div>
+                </div>
+
+                <button onclick="startFlashcards()" id="start-btn">Start Flashcards</button>
+            </div>
+
+            <div id="flashcard-area" style="display: none;">
+                <div class="flashcard-counter" id="card-counter" aria-live="polite">Card 1 of 10</div>
+
+                <div class="flashcard-container" onclick="flipCard()" tabindex="0" role="button" aria-label="Flashcard - click to flip">
+                    <div class="flashcard" id="flashcard">
+                        <div class="flashcard-front">
+                            <div class="flashcard-label">Question</div>
+                            <div class="flashcard-text" id="card-front-text"></div>
+                            <div class="flashcard-hint">Click to flip</div>
+                        </div>
+                        <div class="flashcard-back">
+                            <div class="flashcard-label">Answer</div>
+                            <div class="flashcard-text" id="card-back-text"></div>
+                            <div class="flashcard-hint">Click to flip back</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard-grade-buttons">
+                    <button class="grade-btn grade-btn-correct" onclick="markCard(true)" type="button">Got It</button>
+                    <button class="grade-btn grade-btn-incorrect" onclick="markCard(false)" type="button">Missed It</button>
+                </div>
+
+                <div class="flashcard-nav-buttons">
+                    <button class="secondary-btn" onclick="prevCard()" type="button">Previous</button>
+                    <button class="secondary-btn" onclick="nextCard()" type="button">Next</button>
+                </div>
+            </div>
+
+            <div id="flashcard-end" style="display: none;">
+                <div class="flashcard-end-screen" aria-live="polite">
+                    <h2>Study Session Complete!</h2>
+                    <div class="flashcard-score" id="end-score">You got 0/0 correct</div>
+                    <div class="flashcard-accuracy" id="end-accuracy">0% Accuracy</div>
+                    <div class="flashcard-end-buttons">
+                        <button onclick="resetFlashcards()" type="button">Study Again</button>
+                        <a href="/home"><button class="secondary-btn" type="button">Back to Home</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/flashcards.js"></script>
+</body>
+</html>

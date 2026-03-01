@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Questions</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="standalone-header">
+            <a href="/home" class="back-link">← Back to Home</a>
+        </div>
+
+        <div id="main-content" role="main">
+            <div id="questions-container" class="questions-grid" aria-live="polite"></div>
+            
+            <div id="no-questions" class="empty-state" style="display: none;">
+                <div class="empty-icon">No Questions</div>
+                <h3>No questions yet!</h3>
+                <p>Head to the <a href="/home">Home page</a> to generate some questions</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/questions.js"></script>
+</body>
+</html>

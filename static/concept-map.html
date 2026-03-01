@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Concept Map</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/concept-map-styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/concept-map" class="nav-link active"><span>Concept Map</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="concept-map-page">
+                <div class="page-header">
+                    <h2>Interactive Concept Map</h2>
+                    <p>Visualize your knowledge graph - drag nodes, scroll to zoom, click for details</p>
+                </div>
+                
+                <div id="map-stats" class="map-stats" aria-live="polite"></div>
+                
+                <div id="map-legend" class="map-legend">
+                    <div class="legend-item"><span class="legend-dot mastered"></span> Mastered (80%+)</div>
+                    <div class="legend-item"><span class="legend-dot learning"></span> Learning (50-79%)</div>
+                    <div class="legend-item"><span class="legend-dot beginner"></span> Beginner (1-49%)</div>
+                    <div class="legend-item"><span class="legend-dot not-started"></span> Not Started</div>
+                </div>
+                
+                <div id="concept-map-container" class="concept-map-container"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/concept-map.js"></script>
+</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Achievements</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">Welcome, <strong id="username-display"></strong>!</span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">☰</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link">🏠 Home</a>
+            <a href="/daily-challenge" class="nav-link">📅 Daily</a>
+            <a href="/history" class="nav-link">📊 History</a>
+            <a href="/achievements" class="nav-link active">🏆 Achievements</a>
+            <a href="/recommendations" class="nav-link">🤖 AI Coach</a>
+            <a href="/profile" class="nav-link">👤 Profile</a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>🎮 Your Gamification Stats</h2>
+                    <p>Track your progress and motivation</p>
+                </div>
+                
+                <div id="gamification-stats" class="stats-box" aria-live="polite"></div>
+            </div>
+
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>🏅 Your Badges & Achievements</h2>
+                    <p>Celebrate your progress and milestones</p>
+                </div>
+                
+                <div id="badges-container" class="badges-grid" aria-live="polite"></div>
+            </div>
+
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>🧠 Cognitive Analytics</h2>
+                    <p>Understand how you learn and improve</p>
+                </div>
+                
+                <div id="analytics-container" aria-live="polite"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/achievements.js"></script>
+</body>
+</html>

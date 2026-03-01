@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Performance Breakdown</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div id="loading" class="loading">Loading performance data...</div>
+
+            <div id="performance-content" style="display:none;">
+                <div id="overall-stats" aria-live="polite"></div>
+
+                <div class="perf-section">
+                    <h3>Difficulty Breakdown</h3>
+                    <div id="difficulty-breakdown" aria-live="polite"></div>
+                </div>
+
+                <div class="perf-section">
+                    <div class="perf-section-header">
+                        <h3>Per-Topic Breakdown</h3>
+                        <div class="perf-sort-controls">
+                            <label>Sort by:</label>
+                            <select id="topic-sort" onchange="sortTopics(this.value)">
+                                <option value="accuracy">Accuracy</option>
+                                <option value="total">Total Questions</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="topic-breakdown" aria-live="polite"></div>
+                </div>
+
+                <div class="perf-section">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/performance.js"></script>
+</body>
+</html>

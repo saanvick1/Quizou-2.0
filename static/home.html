@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Home</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="auth-section" class="auth-container">
+            <div class="auth-card">
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="showLogin()" type="button">Login</button>
+                    <button class="auth-tab" onclick="showSignup()" type="button">Sign Up</button>
+                </div>
+
+                <div id="login-form" class="auth-form">
+                    <h2>Welcome Back!</h2>
+                    <input type="text" id="login-username" placeholder="Username" required aria-label="Username" aria-required="true" autocomplete="username">
+                    <input type="password" id="login-password" placeholder="Password" required aria-label="Password" aria-required="true" autocomplete="current-password">
+                    <button onclick="login()">Login</button>
+                    <div id="login-error" class="error" aria-live="assertive"></div>
+                </div>
+
+                <div id="signup-form" class="auth-form" style="display: none;">
+                    <h2>Create Your Account</h2>
+                    <div class="role-selector role-selector-3">
+                        <label class="role-option">
+                            <input type="radio" name="signup-role" value="independent" checked>
+                            <span class="role-card">
+                                <strong>Independent</strong>
+                                <small>Practice on your own</small>
+                            </span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="signup-role" value="student">
+                            <span class="role-card">
+                                <strong>Student</strong>
+                                <small>Practice and learn</small>
+                            </span>
+                        </label>
+                        <label class="role-option">
+                            <input type="radio" name="signup-role" value="teacher">
+                            <span class="role-card">
+                                <strong>Teacher</strong>
+                                <small>Create classes</small>
+                            </span>
+                        </label>
+                    </div>
+                        <div class="signup-fields">
+                            <input type="text" id="signup-full-name" placeholder="Full Legal Name" required aria-label="Full Legal Name" aria-required="true" autocomplete="name">
+                            <input type="email" id="signup-email" placeholder="Email Address" required aria-label="Email Address" aria-required="true" autocomplete="email">
+                            <input type="text" id="signup-username" placeholder="Choose a username" required aria-label="Username" aria-required="true" autocomplete="username">
+                            <input type="password" id="signup-password" placeholder="Password (min 6 characters)" required aria-label="Password" aria-required="true" autocomplete="new-password">
+                        </div>
+                    <button onclick="signup()">Sign Up</button>
+                    <div id="signup-error" class="error" aria-live="assertive"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="main-app" style="display: none;">
+            <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+            <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="/home" class="nav-link active"><span>Home</span></a>
+                <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+                <a href="/teacher-dashboard" class="nav-link" id="nav-my-classes" style="display: none;"><span>My Classes</span></a>
+                <a href="/history" class="nav-link"><span>History</span></a>
+                <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+                <a href="/competition" class="nav-link"><span>Competition</span></a>
+                <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+                <a href="/profile" class="nav-link"><span>Profile</span></a>
+            </nav>
+
+            <div id="main-content" role="main">
+                <div id="teacher-welcome-card" class="teacher-welcome-card" style="display: none;">
+                    <div class="teacher-welcome-header">
+                        <h2>Teacher Dashboard</h2>
+                        <p>Manage your classes and track student progress</p>
+                    </div>
+                    <div class="teacher-action-cards">
+                        <a href="/teacher-dashboard" class="teacher-action-card">
+                            <div class="action-icon">Classes</div>
+                            <h3>My Classes</h3>
+                            <p>View and manage your classrooms, see student rosters and progress</p>
+                        </a>
+                        <a href="/profile" class="teacher-action-card">
+                            <div class="action-icon">Profile</div>
+                            <h3>My Profile</h3>
+                            <p>Update your account settings and preferences</p>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="my-classrooms-card" class="my-classrooms-card" style="display: none;">
+                    <h3>My Classrooms</h3>
+                    <div class="join-class-section">
+                        <div class="join-class-form">
+                            <input type="text" id="join-class-code" placeholder="Enter 6-character class code" maxlength="6" aria-label="Class code">
+                            <button onclick="joinClassroom()" id="join-class-btn">Join Class</button>
+                        </div>
+                        <div id="join-class-message" class="success-message" aria-live="polite"></div>
+                        <div id="join-class-error" class="error" aria-live="assertive"></div>
+                    </div>
+                    <div id="my-classrooms-list" class="my-classrooms-list"></div>
+                </div>
+
+                <div id="study-progress-widget" class="study-progress-widget" style="display:none;" aria-live="polite">
+                    <h3>Your Study Progress</h3>
+                    <div class="progress-stats-row">
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="widget-total">0</div>
+                            <div class="progress-stat-label">Questions</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="widget-accuracy">0%</div>
+                            <div class="progress-stat-label">Accuracy</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="widget-topics">0</div>
+                            <div class="progress-stat-label">Topics</div>
+                        </div>
+                        <div class="progress-stat-card">
+                            <div class="progress-stat-value" id="widget-weak-topic">-</div>
+                            <div class="progress-stat-label">Needs Focus</div>
+                        </div>
+                    </div>
+                    <div class="progress-actions">
+                        <a href="/history#stats" class="progress-link">View Full Stats</a>
+                        <a href="/history#review" class="progress-link">Review Missed</a>
+                        <a href="/recommendations" class="progress-link">AI Coach</a>
+                    </div>
+                </div>
+
+                <div class="feature-tools-grid" id="feature-tools-grid" style="display:none;">
+                    <a href="/power-training" class="feature-tool-card ft-power">
+                        <div class="ft-icon">&#9889;</div>
+                        <h3>Power Training</h3>
+                        <p>Clue-by-clue buzzer practice with pyramidal scoring</p>
+                    </a>
+                    <a href="/knowledge-decay" class="feature-tool-card ft-decay">
+                        <div class="ft-icon">&#129504;</div>
+                        <h3>Knowledge Decay</h3>
+                        <p>Track which topics are fading and need review</p>
+                    </a>
+                    <a href="/challenges" class="feature-tool-card ft-h2h">
+                        <div class="ft-icon">&#9876;</div>
+                        <h3>Head-to-Head</h3>
+                        <p>Challenge friends to a quiz battle</p>
+                    </a>
+                    <a href="/question-writer" class="feature-tool-card ft-writer">
+                        <div class="ft-icon">&#9998;</div>
+                        <h3>Question Writer</h3>
+                        <p>Write NAQT questions and get AI feedback</p>
+                    </a>
+                    <a href="/packet-generator" class="feature-tool-card ft-packet">
+                        <div class="ft-icon">&#128220;</div>
+                        <h3>Packet Generator</h3>
+                        <p>Generate full competition-ready practice packets</p>
+                    </a>
+                    <a href="/question-autopsy" class="feature-tool-card ft-autopsy">
+                        <div class="ft-icon">&#128300;</div>
+                        <h3>Question Autopsy</h3>
+                        <p>Dissect wrong answers and learn from every mistake</p>
+                    </a>
+                    <a href="/debate-arena" class="feature-tool-card ft-debate">
+                        <div class="ft-icon">&#127908;</div>
+                        <h3>Debate Arena</h3>
+                        <p>Argue topics against AI and sharpen critical thinking</p>
+                    </a>
+                    <a href="/timeline-builder" class="feature-tool-card ft-timeline">
+                        <div class="ft-icon">&#128197;</div>
+                        <h3>Timeline Builder</h3>
+                        <p>Drag events into chronological order to master history</p>
+                    </a>
+                </div>
+
+                <div class="generator-card">
+                    <div class="card-header">
+                        <h2>Generate New Questions</h2>
+                        <p>Choose your topic and difficulty to get started</p>
+                    </div>
+
+                    <div id="streak-display" class="streak-display" style="display:none;" aria-live="polite">
+                        <span class="streak-fire">*</span>
+                        <span id="streak-count">0</span> day streak
+                        <span class="streak-best" id="streak-best"></span>
+                    </div>
+
+                    <div class="gen-mode-tabs">
+                        <button class="gen-mode-tab active" onclick="switchGenMode('topic', event)" type="button">By Topic</button>
+                        <button class="gen-mode-tab" onclick="switchGenMode('material', event)" type="button">From My Notes</button>
+                        <button class="gen-mode-tab" onclick="switchGenMode('tournament', event)" type="button">Tournament Round</button>
+                        <button class="gen-mode-tab" onclick="switchGenMode('load', event)" type="button">Load Shared Quiz</button>
+                    </div>
+                    
+                    <div id="gen-mode-topic" class="generator-form">
+                        <div class="form-row-full">
+                            <label for="topic">Topic</label>
+                            <input type="text" id="topic" placeholder="e.g., 'American History', 'Biology', 'Shakespeare', 'Physics'" required aria-required="true">
+                            <small>Type any subject or topic you want to practice</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="difficulty">Difficulty Level</label>
+                                <select id="difficulty">
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                                <div id="adaptive-recommendation" class="adaptive-hint" aria-live="polite"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="num-questions">Number of Questions</label>
+                                <select id="num-questions">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onclick="generateQuestions()" id="generate-btn" class="btn-generate">
+                            Generate Questions
+                        </button>
+                        <div id="generate-error" class="error" aria-live="assertive"></div>
+                    </div>
+
+                    <div id="gen-mode-material" class="generator-form" style="display:none;">
+                        <div class="form-row-full">
+                            <label>Upload Study Notes or Paste Text</label>
+                            <div class="upload-area" id="upload-area" onclick="document.getElementById('file-input').click()" tabindex="0" role="button" aria-label="Click to upload a file">
+                                <input type="file" id="file-input" accept=".txt,.md,.csv" style="display:none" onchange="handleFileUpload(event)" aria-label="Upload study notes file">
+                                <div class="upload-icon">UPLOAD</div>
+                                <p>Click to upload a file (.txt, .md, .csv)</p>
+                                <small>Or paste your notes in the text box below</small>
+                            </div>
+                            <div id="file-info" class="file-info" style="display:none;" aria-live="polite"></div>
+                            <textarea id="material-text" rows="6" placeholder="Paste your study notes, textbook excerpts, or lecture content here..." aria-label="Study notes text"></textarea>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="material-difficulty">Difficulty Level</label>
+                                <select id="material-difficulty">
+                                    <option value="Easy">Easy</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Hard">Hard</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="material-num-questions">Number of Questions</label>
+                                <select id="material-num-questions">
+                                    <option value="1">1</option>
+                                    <option value="2">2</option>
+                                    <option value="3">3</option>
+                                    <option value="4">4</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="6">6</option>
+                                    <option value="7">7</option>
+                                    <option value="8">8</option>
+                                    <option value="9">9</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button onclick="generateFromMaterial()" id="material-generate-btn" class="btn-generate">
+                            Generate from My Notes
+                        </button>
+                        <div id="material-error" class="error" aria-live="assertive"></div>
+                    </div>
+
+                    <div id="gen-mode-tournament" class="generator-form" style="display:none;">
+                        <div class="form-row-full">
+                            <label for="tournament-topic">Topic</label>
+                            <input type="text" id="tournament-topic" placeholder="e.g., 'World History', 'Biology', 'Literature'">
+                            <small>Choose a broad topic for your tournament round</small>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="tournament-num">Number of Toss-Ups</label>
+                                <select id="tournament-num">
+                                    <option value="3">3</option>
+                                    <option value="5" selected>5</option>
+                                    <option value="7">7</option>
+                                    <option value="10">10</option>
+                                </select>
+                            </div>
+                        </div>
+                        <p class="tournament-info">Each toss-up (10 pts) is followed by a 3-part bonus set (30 pts max). Total possible: <span id="tournament-max-pts">200</span> pts</p>
+                        <button onclick="generateTournamentRound()" id="tournament-generate-btn" class="btn-generate">
+                            Generate Tournament Round
+                        </button>
+                        <div id="tournament-error" class="error" aria-live="assertive"></div>
+                    </div>
+
+                    <div id="gen-mode-load" class="generator-form" style="display:none;">
+                        <div class="form-row-full">
+                            <label for="share-code-input">Enter Share Code</label>
+                            <input type="text" id="share-code-input" placeholder="e.g., AB3XY9" maxlength="6" style="text-transform: uppercase;">
+                            <small>Enter a 6-character code from a friend or teammate to load their quiz</small>
+                        </div>
+                        <button onclick="loadSharedQuiz()" id="load-shared-btn" class="btn-generate">
+                            Load Quiz
+                        </button>
+                        <div id="load-error" class="error" aria-live="assertive"></div>
+
+                        <div id="my-shared-quizzes" class="my-shared-list" style="display:none;">
+                            <h4>My Shared Quizzes</h4>
+                            <div id="shared-quizzes-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/home.js"></script>
+</body>
+</html>

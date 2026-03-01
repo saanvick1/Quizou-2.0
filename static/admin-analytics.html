@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Admin Analytics</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/admin-analytics.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        Welcome, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">Admin Analytics Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="admin-back">
+            <a href="/home" class="back-link">Back to Home</a>
+        </div>
+
+        <div id="main-content" role="main">
+            <div id="access-denied" class="access-denied" style="display: none;" aria-live="assertive">
+                <h2>Access Denied</h2>
+                <p>You do not have permission to view this page.</p>
+                <a href="/home">Go Home</a>
+            </div>
+
+            <div id="admin-content" style="display: none;">
+                <div id="loading" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    Loading analytics...
+                </div>
+
+                <div id="dashboard" style="display: none;">
+                    <div class="overview-grid" id="overview-grid" aria-live="polite"></div>
+
+                    <div class="section-row">
+                        <div class="chart-section">
+                            <h3>Daily Page Views (Last 30 Days)</h3>
+                            <canvas id="views-chart" aria-label="Daily page views chart"></canvas>
+                        </div>
+                        <div class="chart-section">
+                            <h3>Top Pages</h3>
+                            <div id="top-pages-list"></div>
+                        </div>
+                    </div>
+
+                    <div class="section-row">
+                        <div class="chart-section">
+                            <h3>Popular Topics</h3>
+                            <div id="topic-stats"></div>
+                        </div>
+                        <div class="chart-section">
+                            <h3>User Signups Over Time</h3>
+                            <canvas id="signups-chart" aria-label="User signups over time chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="users-section">
+                        <h3>All Users</h3>
+                        <div class="users-table-wrap">
+                            <table class="users-table" id="users-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Username</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th>School</th>
+                                        <th>Questions</th>
+                                        <th>Accuracy</th>
+                                        <th>Joined</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/admin-analytics.js"></script>
+</body>
+</html>

@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Shared Quiz</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">Shared Quiz</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-content" role="main">
+            <div id="loading" class="generator-card" style="text-align:center; padding: 50px;">
+                Loading quiz...
+            </div>
+
+            <div id="quiz-content" style="display:none;">
+                <div class="generator-card">
+                    <div id="quiz-header"></div>
+                    <div id="quiz-questions" aria-live="polite"></div>
+                </div>
+                <div style="text-align:center; margin-top:20px;">
+                    <a href="/" class="btn-generate" style="display:inline-block; text-decoration:none; padding:12px 30px;">Sign up to practice on your own</a>
+                </div>
+            </div>
+
+            <div id="quiz-error" class="generator-card" style="display:none; text-align:center; padding:50px;" aria-live="assertive">
+                <h3 style="color: #ef4444;">Quiz Not Found</h3>
+                <p style="color: #64748b; margin-top:10px;">This share code may be invalid or expired.</p>
+                <a href="/" style="display:inline-block; margin-top:20px; color:#3b4c9b; font-weight:600;">Go to Quizou</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadSharedQuiz() {
+            const path = window.location.pathname;
+            const code = path.split('/').pop();
+
+            try {
+                const response = await fetch('/api/shared-quiz/' + code);
+                const data = await response.json();
+
+                document.getElementById('loading').style.display = 'none';
+
+                if (!response.ok || !data.success) {
+                    document.getElementById('quiz-error').style.display = 'block';
+                    return;
+                }
+
+                document.getElementById('quiz-content').style.display = 'block';
+
+                document.getElementById('quiz-header').innerHTML =
+                    '<div class="card-header">' +
+                    '<h2>' + escapeHtml(data.title) + '</h2>' +
+                    '<p>Created by ' + escapeHtml(data.creator) +
+                    (data.topic ? ' | ' + escapeHtml(data.topic) : '') +
+                    (data.difficulty ? ' | ' + escapeHtml(data.difficulty) : '') +
+                    ' | ' + data.questions.length + ' questions</p>' +
+                    (data.description ? '<p style="margin-top:6px; color:#64748b; font-size:0.9em;">' + escapeHtml(data.description) + '</p>' : '') +
+                    '</div>';
+
+                const container = document.getElementById('quiz-questions');
+                data.questions.forEach((q, i) => {
+                    const box = document.createElement('div');
+                    box.className = 'question-box';
+                    box.innerHTML =
+                        '<div class="question-header"><span><strong>Question ' + (i + 1) + '</strong></span>' +
+                        '<span class="question-meta">' + escapeHtml(q.topic || '') + ' | ' + (q.difficulty || '') + '</span></div>' +
+                        '<div class="question-text">' + escapeHtml(q.question) + '</div>' +
+                        '<div class="answer-section">' +
+                        '<button onclick="toggleSharedAnswer(' + i + ')" id="show-ans-' + i + '" type="button">Show Answer</button>' +
+                        '<div id="ans-' + i + '" style="display:none;" class="answer-text"><strong>Answer:</strong> ' + escapeHtml(q.answer) + '</div>' +
+                        '</div>';
+                    container.appendChild(box);
+                });
+            } catch (e) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('quiz-error').style.display = 'block';
+            }
+        }
+
+        function toggleSharedAnswer(i) {
+            const ans = document.getElementById('ans-' + i);
+            const btn = document.getElementById('show-ans-' + i);
+            ans.style.display = ans.style.display === 'none' ? 'block' : 'none';
+            btn.style.display = 'none';
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        loadSharedQuiz();
+    </script>
+</body>
+</html>

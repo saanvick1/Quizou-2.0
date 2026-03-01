@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Leaderboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">Welcome, <strong id="username-display"></strong>!</span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-bar" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link">Home</a>
+            <a href="/daily-challenge" class="nav-link">Daily</a>
+            <a href="/history" class="nav-link">History</a>
+            <a href="/leaderboard" class="nav-link active">Leaderboard</a>
+            <a href="/achievements" class="nav-link">Achievements</a>
+            <a href="/profile" class="nav-link">Profile</a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>🏆 Global Leaderboard</h2>
+                    <p>Top performers worldwide</p>
+                </div>
+                
+                <div class="leaderboard-filters">
+                    <button onclick="loadLeaderboard('global')" class="filter-btn active" id="global-btn" type="button">Global</button>
+                    <button onclick="loadLeaderboard('school')" class="filter-btn" id="school-btn" type="button">My School</button>
+                </div>
+                
+                <div id="leaderboard-container" class="leaderboard-list" aria-live="polite"></div>
+            </div>
+
+            <div class="generator-card">
+                <div class="card-header">
+                    <h2>📊 Your Stats</h2>
+                </div>
+                <div id="user-stats-container" aria-live="polite"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/leaderboard.js"></script>
+</body>
+</html>

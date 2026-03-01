@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Competition Mode</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link active"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div id="competition-setup" class="generator-card">
+                <div class="card-header">
+                    <h2>Simulated Competition Mode</h2>
+                    <p>Challenge the AI competitor - Test your knowledge head-to-head</p>
+                </div>
+                
+                <div class="generator-form">
+                    <div class="form-row-full">
+                        <label>Your Most Practiced Topics</label>
+                        <div id="suggested-topics" class="suggested-topics" aria-live="polite">
+                            <p class="loading-text">Loading your topics...</p>
+                        </div>
+                    </div>
+
+                    <div class="form-row-full">
+                        <label for="competition-type">Competition Type</label>
+                        <select id="competition-type">
+                            <option value="standard">Standard - Balanced difficulty, accuracy-based</option>
+                            <option value="speed">Speed - Time pressure (30s per question)</option>
+                            <option value="expert">Expert - Hard questions, deep knowledge</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row-full">
+                        <label for="num-questions">Number of Questions</label>
+                        <select id="num-questions">
+                            <option value="5">5</option>
+                            <option value="10" selected>10</option>
+                            <option value="15">15</option>
+                            <option value="20">20</option>
+                        </select>
+                    </div>
+
+                    <button onclick="startCompetition(event)" class="generate-btn">Start Competition vs AI</button>
+                </div>
+            </div>
+
+            <div id="competition-session" style="display: none;">
+                <div class="generator-card">
+                    <div id="competition-info" class="competition-info" aria-live="polite"></div>
+                    
+                    <div id="scoreboard" class="scoreboard" style="display: none;" aria-live="polite">
+                        <div class="score-card user-score">
+                            <h3>You</h3>
+                            <div class="score" id="user-score">0</div>
+                        </div>
+                        <div class="score-vs">VS</div>
+                        <div class="score-card ai-score">
+                            <h3>AI Competitor</h3>
+                            <div class="score" id="ai-score">0</div>
+                        </div>
+                    </div>
+                    
+                    <div id="questions-container" aria-live="polite"></div>
+                    <div id="results-container" aria-live="polite"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/competition.js"></script>
+</body>
+</html>

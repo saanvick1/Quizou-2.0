@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Study Sets</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">Study Sets</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-app">
+            <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+            <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="/home" class="nav-link"><span>Home</span></a>
+                <a href="/history" class="nav-link"><span>History</span></a>
+                <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+                <a href="/competition" class="nav-link"><span>Competition</span></a>
+                <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+                <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+                <a href="/profile" class="nav-link"><span>Profile</span></a>
+            </nav>
+
+            <div id="main-content" role="main">
+                <div class="study-sets-container">
+                    <div class="study-sets-header">
+                        <h2>My Study Sets</h2>
+                        <button class="btn-generate" onclick="showCreateForm()" type="button">+ New Set</button>
+                    </div>
+
+                    <div id="create-set-form" class="create-set-form" style="display:none;">
+                        <input type="text" id="new-set-name" placeholder="Set name (e.g., Biology Midterm)" maxlength="100" aria-label="Study set name" aria-required="true">
+                        <input type="text" id="new-set-desc" placeholder="Description (optional)" maxlength="200" aria-label="Study set description">
+                        <div class="create-set-actions">
+                            <button class="btn-generate" onclick="createSet()">Create</button>
+                            <button class="show-answer-btn" onclick="hideCreateForm()" type="button">Cancel</button>
+                        </div>
+                        <div id="create-error" class="error" aria-live="assertive"></div>
+                    </div>
+
+                    <div id="sets-list" aria-live="polite"></div>
+                    <div id="empty-state" class="empty-state" style="display:none;">
+                        <h3>No Study Sets Yet</h3>
+                        <p>Create your first study set to organize questions for focused practice.</p>
+                        <p>You can add questions from any quiz by clicking "Save to Set" on the questions page.</p>
+                    </div>
+
+                    <div id="set-detail" style="display:none;">
+                        <div class="set-detail-header">
+                            <button class="show-answer-btn" onclick="backToList()" type="button">Back to Sets</button>
+                            <h3 id="set-detail-name"></h3>
+                            <div class="set-detail-actions">
+                                <button class="btn-generate" onclick="practiceSet()" type="button">Practice These Questions</button>
+                                <button class="btn-danger" id="delete-set-btn" onclick="deleteCurrentSet()" type="button">Delete Set</button>
+                            </div>
+                        </div>
+                        <div id="set-questions-list" aria-live="polite"></div>
+                        <div id="set-empty" class="empty-state" style="display:none;">
+                            <p>No questions in this set yet. Add questions from the questions page.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/study-sets.js"></script>
+</body>
+</html>

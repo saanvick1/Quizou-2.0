@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Question Autopsy Lab</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-app" style="display: none;">
+            <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+            <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="/home" class="nav-link"><span>Home</span></a>
+                <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+                <a href="/teacher-dashboard" class="nav-link" id="nav-my-classes" style="display: none;"><span>My Classes</span></a>
+                <a href="/history" class="nav-link"><span>History</span></a>
+                <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+                <a href="/competition" class="nav-link"><span>Competition</span></a>
+                <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+                <a href="/profile" class="nav-link"><span>Profile</span></a>
+            </nav>
+
+            <div id="main-content" role="main">
+                <div class="page-header">
+                    <div>
+                        <h2>&#128300; Question Autopsy Lab</h2>
+                        <p>Dissect missed questions to understand every clue and close knowledge gaps</p>
+                    </div>
+                </div>
+
+                <div class="autopsy-form-card" id="autopsy-form-card">
+                    <h3>Enter a Question to Dissect</h3>
+                    <div class="generator-form">
+                        <div class="form-row-full">
+                            <label for="autopsy-question">Question Text</label>
+                            <textarea id="autopsy-question" rows="4" placeholder="Paste the full question text here..." aria-label="Question text"></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="autopsy-answer">Correct Answer</label>
+                                <input type="text" id="autopsy-answer" placeholder="The correct answer" aria-label="Correct answer">
+                            </div>
+                            <div class="form-group">
+                                <label for="autopsy-user-answer">Your Wrong Answer</label>
+                                <input type="text" id="autopsy-user-answer" placeholder="What you answered" aria-label="Your answer">
+                            </div>
+                        </div>
+                        <div class="form-row-full">
+                            <label for="autopsy-topic">Topic</label>
+                            <input type="text" id="autopsy-topic" placeholder="e.g., American History, Biology, Literature" aria-label="Topic">
+                        </div>
+                        <button onclick="analyzeQuestion()" id="autopsy-btn" class="btn-generate">Dissect This Question</button>
+                        <div id="autopsy-error" class="error" aria-live="assertive"></div>
+                    </div>
+                </div>
+
+                <div id="autopsy-results" class="autopsy-results" style="display: none;">
+                    <div class="autopsy-section">
+                        <h3>&#128269; Clue-by-Clue Breakdown</h3>
+                        <div id="clue-cards-container" class="clue-cards-container"></div>
+                    </div>
+
+                    <div class="autopsy-section autopsy-gap-box">
+                        <div class="autopsy-gap-header">
+                            <span class="autopsy-gap-icon">&#128161;</span>
+                            <h3>Knowledge Gap &amp; Mini-Lesson</h3>
+                        </div>
+                        <div id="knowledge-gap-text" class="knowledge-gap-text"></div>
+                        <div id="mini-lesson-list" class="mini-lesson-list"></div>
+                    </div>
+
+                    <div class="autopsy-section">
+                        <h3>&#127919; Recovery Quiz</h3>
+                        <p class="autopsy-recovery-subtitle">Test yourself on the concepts you just learned</p>
+                        <div id="recovery-quiz-container" class="recovery-quiz-container"></div>
+                    </div>
+
+                    <button onclick="resetAutopsy()" class="secondary-btn" style="margin-top: 20px;">Dissect Another Question</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/question-autopsy.js"></script>
+</body>
+</html>

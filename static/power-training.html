@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Power Training</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">Clue-by-Clue Power Training</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div id="main-app">
+            <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+            <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+                <a href="/home" class="nav-link"><span>Home</span></a>
+                <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+                <a href="/history" class="nav-link"><span>History</span></a>
+                <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+                <a href="/competition" class="nav-link"><span>Competition</span></a>
+                <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+                <a href="/profile" class="nav-link"><span>Profile</span></a>
+            </nav>
+
+            <div id="main-content" role="main">
+                <div id="setup-section" class="generator-card">
+                    <div class="card-header">
+                        <h2>Power Training</h2>
+                        <p>Practice buzzing on pyramidal clues — earn more points by buzzing early!</p>
+                    </div>
+                    <div class="generator-form">
+                        <div class="form-row-full">
+                            <label for="pt-topic">Topic</label>
+                            <input type="text" id="pt-topic" placeholder="e.g., 'American History', 'Biology', 'Shakespeare'" required aria-required="true">
+                            <small>Choose a topic for your power training session</small>
+                        </div>
+                        <button onclick="startTraining()" id="start-btn" class="btn-generate">Start Training</button>
+                        <div id="start-error" class="error" aria-live="assertive"></div>
+                    </div>
+                </div>
+
+                <div id="training-section" class="power-training-area" style="display:none;">
+                    <div class="pt-header">
+                        <div class="pt-topic-label" id="pt-topic-display"></div>
+                        <div class="pt-question-counter">Question <span id="pt-q-num">1</span></div>
+                    </div>
+
+                    <div class="pt-clue-progress">
+                        <div class="pt-clue-dots" id="pt-clue-dots"></div>
+                        <div class="pt-clue-label" id="pt-clue-label">Clue 1</div>
+                    </div>
+
+                    <div class="pt-clue-container">
+                        <div class="pt-clues-list" id="pt-clues-list"></div>
+                    </div>
+
+                    <div class="pt-points-indicator" id="pt-points-indicator">
+                        <span class="pt-points-value" id="pt-points-value">15 pts</span> if you buzz now
+                    </div>
+
+                    <div id="pt-action-buttons" class="pt-action-buttons">
+                        <button onclick="nextClue()" id="next-clue-btn" class="secondary-btn">Next Clue</button>
+                        <button onclick="buzz()" id="buzz-btn" class="pt-buzz-btn">BUZZ!</button>
+                    </div>
+
+                    <div id="pt-answer-section" class="pt-answer-section" style="display:none;">
+                        <label for="pt-answer-input">Your Answer:</label>
+                        <input type="text" id="pt-answer-input" placeholder="Type your answer..." autofocus>
+                        <button onclick="submitBuzz()" id="submit-buzz-btn" class="btn-generate">Submit Answer</button>
+                    </div>
+
+                    <div id="pt-result" class="pt-result" style="display:none;"></div>
+
+                    <div id="pt-next-q-btn" style="display:none; text-align:center; margin-top:20px;">
+                        <button onclick="loadNextQuestion()" class="btn-generate">Next Question</button>
+                    </div>
+                </div>
+
+                <div id="summary-section" class="power-training-summary" style="display:none;">
+                    <div class="card-header">
+                        <h2>Session Summary</h2>
+                    </div>
+                    <div class="pt-summary-stats">
+                        <div class="pt-summary-stat">
+                            <div class="pt-summary-value" id="sum-total-pts">0</div>
+                            <div class="pt-summary-label">Total Points</div>
+                        </div>
+                        <div class="pt-summary-stat">
+                            <div class="pt-summary-value" id="sum-accuracy">0%</div>
+                            <div class="pt-summary-label">Accuracy</div>
+                        </div>
+                        <div class="pt-summary-stat">
+                            <div class="pt-summary-value" id="sum-avg-depth">0</div>
+                            <div class="pt-summary-label">Avg Buzz Depth</div>
+                        </div>
+                        <div class="pt-summary-stat">
+                            <div class="pt-summary-value" id="sum-powers">0</div>
+                            <div class="pt-summary-label">Powers (Early Buzz)</div>
+                        </div>
+                    </div>
+                    <div class="pt-summary-breakdown" id="sum-breakdown"></div>
+                    <div class="pt-summary-actions">
+                        <button onclick="resetTraining()" class="btn-generate">Train Again</button>
+                        <a href="/home" class="secondary-btn" style="text-decoration:none; display:inline-block; text-align:center;">Back to Home</a>
+                    </div>
+                </div>
+
+                <div id="career-stats" class="pt-career-stats" style="display:none;">
+                    <h3>Career Stats</h3>
+                    <div class="pt-career-row">
+                        <span>Total Buzzes: <strong id="career-total">0</strong></span>
+                        <span>Correct: <strong id="career-correct">0</strong></span>
+                        <span>Avg Depth: <strong id="career-depth">0</strong></span>
+                        <span>Total Points: <strong id="career-pts">0</strong></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/power-training.js"></script>
+</body>
+</html>

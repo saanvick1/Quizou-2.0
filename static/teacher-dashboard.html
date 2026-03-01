@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Teacher Dashboard</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">Teacher Dashboard</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <nav class="nav-bar" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/teacher-dashboard" class="nav-link active"><span>My Classes</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+            <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="teacher-dashboard">
+                <div class="create-class-section">
+                    <h2>Create a New Class</h2>
+                    <div class="create-class-form">
+                        <input type="text" id="new-class-name" placeholder="Enter class name (e.g., AP History Period 3)" maxlength="100" aria-label="New class name" aria-required="true">
+                        <button onclick="createClass()" id="create-class-btn">Create Class</button>
+                    </div>
+                    <div id="create-class-message" class="success-message" aria-live="polite"></div>
+                    <div id="create-class-error" class="error" aria-live="assertive"></div>
+                </div>
+
+                <div class="my-classes-section">
+                    <h2>My Classes</h2>
+                    <div id="classes-loading" class="loading-text">Loading your classes...</div>
+                    <div id="classes-list" class="classes-list" aria-live="polite"></div>
+                    <div id="no-classes" class="no-data" style="display: none;">
+                        You haven't created any classes yet. Create one above to get started!
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="post-modal" class="modal-overlay" style="display:none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>New Post</h3>
+                <button onclick="closePostModal()" class="modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="post-title" placeholder="Post title" maxlength="200" aria-label="Post title">
+                <select id="post-type" aria-label="Post type">
+                    <option value="announcement">Announcement</option>
+                    <option value="assignment">Assignment</option>
+                    <option value="resource">Resource</option>
+                </select>
+                <textarea id="post-content" placeholder="Write your post content here..." rows="5" aria-label="Post content"></textarea>
+                <div id="post-error" class="error" aria-live="assertive"></div>
+            </div>
+            <div class="modal-footer">
+                <button onclick="closePostModal()" class="btn-secondary">Cancel</button>
+                <button onclick="submitPost()" id="submit-post-btn" class="btn-primary">Post</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/teacher-dashboard.js"></script>
+</body>
+</html>

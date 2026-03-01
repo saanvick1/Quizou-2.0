@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Topic Insights</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/concept-map-styles.css">
+    <link rel="stylesheet" href="/static/topic-insights-styles.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span class="header-welcome">
+                        <span>Welcome</span>, <strong id="username-display"></strong>!
+                    </span>
+                    <button class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link active"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+                <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+                <a href="/packet-generator" class="nav-link"><span>Packets</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div id="study-tip-banner" class="study-tip-banner" style="display: none;" aria-live="polite"></div>
+
+            <div id="overall-stats" class="overall-stats-bar" aria-live="polite"></div>
+
+            <div class="insights-tabs">
+                <button class="insights-tab active" onclick="switchTab('recommendations')" id="tab-recommendations" type="button">Smart Analysis</button>
+                <button class="insights-tab" onclick="switchTab('mistakes')" id="tab-mistakes" type="button">Mistake Patterns</button>
+                <button class="insights-tab" onclick="switchTab('map')" id="tab-map" type="button">Knowledge Map</button>
+            </div>
+
+            <div class="auto-refresh-indicator" id="refresh-indicator">
+                <span class="refresh-dot"></span> Live updating
+            </div>
+
+            <div id="panel-recommendations" class="insights-panel active">
+                <div id="recommendations-container" class="recommendations-container" aria-live="polite"></div>
+            </div>
+
+            <div id="panel-mistakes" class="insights-panel" style="display: none;">
+                <div class="generator-card">
+                    <div class="card-header">
+                        <h2>Mistake Patterns</h2>
+                        <p>AI-detected patterns in your incorrect answers</p>
+                    </div>
+                    <div id="insights-container" class="insights-container" aria-live="polite"></div>
+                </div>
+            </div>
+
+            <div id="panel-map" class="insights-panel" style="display: none;">
+                <div class="concept-map-page">
+                    <div class="page-header">
+                        <h2>Knowledge Map</h2>
+                        <p>Visualize your mastery - drag nodes, scroll to zoom, click for details</p>
+                    </div>
+                    <div id="map-stats" class="map-stats" aria-live="polite"></div>
+                    <div id="map-legend" class="map-legend">
+                        <div class="legend-item"><span class="legend-dot mastered"></span> Mastered (80%+)</div>
+                        <div class="legend-item"><span class="legend-dot learning"></span> Learning (50-79%)</div>
+                        <div class="legend-item"><span class="legend-dot beginner"></span> Beginner (1-49%)</div>
+                        <div class="legend-item"><span class="legend-dot not-started"></span> Not Started</div>
+                    </div>
+                    <div id="concept-map-container" class="concept-map-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/topic-insights.js"></script>
+</body>
+</html>

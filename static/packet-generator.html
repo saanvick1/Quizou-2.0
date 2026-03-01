@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizou - Smart Packet Generator</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <div class="container">
+        <header role="banner">
+            <div class="header-content">
+                <div class="header-top">
+                    <span id="header-welcome" class="header-welcome" style="display: none;">
+                        <span>Welcome</span>, <strong id="header-username"></strong>!
+                    </span>
+                    <div class="header-actions" style="display: none;" id="header-actions">
+                        <button id="header-logout-btn" class="header-logout-btn" onclick="logout()" type="button">Logout</button>
+                    </div>
+                </div>
+                <div class="header-bottom">
+                    <div class="header-brand">
+                        <img src="/static/logo.jpeg" alt="Quizou Logo" class="logo">
+                        <div>
+                            <h1>Quizou</h1>
+                            <p class="subtitle">NAQT-Style Practice Questions Powered by AI</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <button class="menu-toggle" onclick="toggleMenu()" type="button" aria-label="Toggle navigation menu">Menu</button>
+        <nav class="nav-bar" id="nav-menu" role="navigation" aria-label="Main navigation">
+            <a href="/home" class="nav-link"><span>Home</span></a>
+            <a href="/daily-challenge" class="nav-link"><span>Daily</span></a>
+            <a href="/history" class="nav-link"><span>History</span></a>
+            <a href="/topic-insights" class="nav-link"><span>Topic Insights</span></a>
+            <a href="/competition" class="nav-link"><span>Competition</span></a>
+            <a href="/recommendations" class="nav-link"><span>AI Coach</span></a>
+            <a href="/flashcards" class="nav-link"><span>Flashcards</span></a>
+            <a href="/profile" class="nav-link"><span>Profile</span></a>
+        </nav>
+
+        <div id="main-content" role="main">
+            <div class="page-header">
+                <div>
+                    <h2>Smart Packet Generator</h2>
+                    <p>Generate competition-ready scholar bowl packets with AI</p>
+                </div>
+            </div>
+
+            <div class="packet-config-card">
+                <div class="packet-type-selector">
+                    <label class="packet-type-option">
+                        <input type="radio" name="packet-type" value="full">
+                        <span class="packet-type-card">
+                            <strong>Full Packet</strong>
+                            <small>20 Toss-Ups + Bonuses</small>
+                        </span>
+                    </label>
+                    <label class="packet-type-option">
+                        <input type="radio" name="packet-type" value="half" checked>
+                        <span class="packet-type-card">
+                            <strong>Half Packet</strong>
+                            <small>10 Toss-Ups + Bonuses</small>
+                        </span>
+                    </label>
+                    <label class="packet-type-option">
+                        <input type="radio" name="packet-type" value="lightning">
+                        <span class="packet-type-card">
+                            <strong>Lightning Round</strong>
+                            <small>30 Short-Answer</small>
+                        </span>
+                    </label>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="packet-difficulty">Difficulty Level</label>
+                        <select id="packet-difficulty">
+                            <option value="Easy">Easy</option>
+                            <option value="Medium" selected>Medium</option>
+                            <option value="Hard">Hard</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button onclick="generatePacket()" id="generate-packet-btn" class="btn-generate">
+                    Generate Packet
+                </button>
+                <div id="packet-error" class="error" aria-live="assertive"></div>
+            </div>
+
+            <div id="packet-loading" class="packet-loading-overlay" style="display: none;">
+                <div class="packet-loading-content">
+                    <div class="packet-spinner"></div>
+                    <h3>Generating Your Packet...</h3>
+                    <p>This may take a moment for full packets</p>
+                </div>
+            </div>
+
+            <div id="packet-output" style="display: none;">
+                <div class="packet-actions no-print">
+                    <button onclick="window.print()" class="btn-generate">Print Packet</button>
+                    <button onclick="resetPacket()" class="secondary-btn">Generate Another</button>
+                </div>
+
+                <div id="packet-content" class="packet-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/packet-generator.js"></script>
+</body>
+</html>
