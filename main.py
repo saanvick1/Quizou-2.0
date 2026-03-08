@@ -679,10 +679,16 @@ def get_leaderboard():
         ''')
     
     rows = cursor.fetchall()
+    col_names = [desc[0] for desc in cursor.description] if cursor.description else []
     conn.close()
     
     leaderboard_data = []
     for row in rows:
+        rank_val = None
+        if 'global_rank' in col_names:
+            rank_val = row['global_rank']
+        elif 'school_rank' in col_names:
+            rank_val = row['school_rank']
         leaderboard_data.append({
             'username': row['username'],
             'school': row['school'],
@@ -690,7 +696,7 @@ def get_leaderboard():
             'correct': row['total_correct'],
             'total': row['total_questions'],
             'accuracy': row['accuracy_rate'],
-            'rank': row.get('global_rank') or row.get('school_rank')
+            'rank': rank_val
         })
     
     return jsonify({'leaderboard': leaderboard_data}), 200
@@ -2059,7 +2065,6 @@ Return ONLY valid JSON array:
         result = response.json()
         content = result['choices'][0]['message']['content']
         
-        # Extract JSON
         content = content.strip()
         if content.startswith('```json'):
             content = content[7:]
@@ -2069,7 +2074,19 @@ Return ONLY valid JSON array:
             content = content[:-3]
         content = content.strip()
         
-        questions = json.loads(content)
+        try:
+            questions = json.loads(content)
+        except json.JSONDecodeError:
+            import re
+            json_match = re.search(r'\[.*\]', content, re.DOTALL)
+            if json_match:
+                try:
+                    questions = json.loads(json_match.group())
+                except json.JSONDecodeError:
+                    cleaned = re.sub(r',\s*([}\]])', r'\1', json_match.group())
+                    questions = json.loads(cleaned)
+            else:
+                return jsonify({'error': 'AI returned invalid format'}), 500
         
         return jsonify({
             'success': True,
@@ -2856,11 +2873,14 @@ def knowledge_decay_get():
     conn = get_db()
     cursor = conn.cursor()
     cursor.execute('''
-        SELECT topic,
+        SELECT q.topic,
                COUNT(*) as total,
-               SUM(CASE WHEN correct = 1 THEN 1 ELSE 0 END) as correct_count,
-               MAX(timestamp) as last_practiced
-        FROM history WHERE user_id = ? GROUP BY topic
+               SUM(CASE WHEN h.correct = 1 THEN 1 ELSE 0 END) as correct_count,
+               MAX(h.timestamp) as last_practiced
+        FROM history h
+        JOIN questions q ON h.question_id = q.id
+        WHERE h.user_id = ? AND q.topic IS NOT NULL AND q.topic != ''
+        GROUP BY q.topic
     ''', (session['user_id'],))
     rows = cursor.fetchall()
     conn.close()
@@ -2868,6 +2888,8 @@ def knowledge_decay_get():
     now = datetime.now()
     for row in rows:
         topic, total, correct_count, last_practiced = row
+        if not topic or topic == 'packet_generated':
+            continue
         accuracy = (correct_count / total * 100) if total > 0 else 50
         try:
             last_dt = datetime.strptime(last_practiced, '%Y-%m-%d %H:%M:%S') if last_practiced else now
@@ -3111,9 +3133,24 @@ def packet_generator_api():
         return jsonify({'error': 'Invalid difficulty'}), 400
     try:
         packet = generate_packet(packet_type, difficulty, user_id=session['user_id'])
-        return jsonify({'success': True, 'packet': packet, 'packet_type': packet_type}), 200
+        from ai import get_user_packet_count_today, MAX_PACKETS_PER_DAY
+        remaining = MAX_PACKETS_PER_DAY - get_user_packet_count_today(session['user_id'])
+        return jsonify({'success': True, 'packet': packet, 'packet_type': packet_type, 'packets_remaining_today': remaining}), 200
+    except ValueError as e:
+        err_msg = str(e)
+        if 'Daily packet limit' in err_msg:
+            return jsonify({'error': err_msg}), 429
+        return jsonify({'error': err_msg}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@app.route('/api/packet-generator/remaining', methods=['GET'])
+def packet_remaining_api():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not logged in'}), 401
+    from ai import get_user_packet_count_today, MAX_PACKETS_PER_DAY
+    used = get_user_packet_count_today(session['user_id'])
+    return jsonify({'used': used, 'limit': MAX_PACKETS_PER_DAY, 'remaining': MAX_PACKETS_PER_DAY - used})
 
 @app.route('/api/autopsy/analyze', methods=['POST'])
 def autopsy_analyze():
@@ -3124,8 +3161,10 @@ def autopsy_analyze():
     correct_answer = data.get('answer', '').strip()
     user_answer = data.get('user_answer', '').strip()
     topic = data.get('topic', '').strip()
-    if not question_text or not correct_answer or not user_answer:
-        return jsonify({'error': 'Question, correct answer, and your answer are required'}), 400
+    if not question_text or not correct_answer:
+        return jsonify({'error': 'Question and correct answer are required'}), 400
+    if not user_answer:
+        user_answer = '(no answer given)'
     try:
         result = analyze_question_autopsy(question_text, correct_answer, user_answer, topic or 'General')
         return jsonify({'success': True, 'analysis': result}), 200
