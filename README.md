@@ -259,8 +259,8 @@ Most Quiz Bowl practice tools suffer from one or more critical limitations: they
 ### Installation
 
 ```bash
-git clone https://github.com/saanvick1/quizou.git
-cd quizou
+git clone https://github.com/saanvick1/Quizou-2.0.git
+cd Quizou-2.0
 
 pip install flask flask-cors requests werkzeug
 
