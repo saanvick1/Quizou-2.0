@@ -2,10 +2,12 @@ import requests
 import json
 import os
 import sqlite3
+import re as _re
 from typing import List, Dict
 
 DB_NAME = 'scholar_bowl.db'
 MAX_RETRY_ATTEMPTS = 3
+MAX_PACKETS_PER_DAY = 8
 
 def _validate_answer_not_in_question(question_text: str, answer: str) -> bool:
     import re
@@ -54,7 +56,7 @@ def _validate_answer_not_in_question(question_text: str, answer: str) -> bool:
     return True
 
 
-def _validate_question_completeness(question_text: str) -> bool:
+def _validate_question_completeness(question_text: str, strict: bool = True) -> bool:
     import re
     if not question_text or len(question_text.strip()) < 80:
         return False
@@ -64,16 +66,92 @@ def _validate_question_completeness(question_text: str) -> bool:
     sentences = [s.strip() for s in re.split(r'(?<=[.?!])\s+', q) if s.strip()]
     if len(sentences) < 3:
         return False
+    if not strict:
+        return True
     last_two = ' '.join(sentences[-2:]).lower() if len(sentences) >= 2 else sentences[-1].lower()
     closing_patterns = [
         'name this', 'identify this', 'name these', 'identify these',
         'what is this', 'what are these', 'give this', 'name the',
-        'what is the name', 'who is this', 'who was this'
+        'what is the name', 'who is this', 'who was this',
+        'for ten points', 'for 10 points', 'ftp',
+        'what is', 'who is', 'who was', 'what was'
     ]
     has_proper_ending = any(p in last_two for p in closing_patterns)
     if not has_proper_ending:
         return False
     return True
+
+
+def _rephrase_to_remove_answer(question_text: str, answer: str, api_key: str, api_url: str, model: str) -> str:
+    prompt = f"""Rewrite the following NAQT scholar bowl toss-up question so that the answer "{answer}" NEVER appears anywhere in the question text.
+
+ORIGINAL QUESTION:
+{question_text}
+
+ANSWER: {answer}
+
+RULES:
+- Replace every mention of "{answer}" with indirect references like "This scientist...", "This novel...", "This country...", "He...", "She...", "It...", "This person...", etc.
+- Keep the same facts, clues, and pyramidal structure.
+- The question MUST still end with "Name this [type]." or "Identify this [type]."
+- Keep it 5-7 sentences, hardest clue first, easiest last.
+- Return ONLY the rewritten question text, nothing else. No JSON, no explanation."""
+
+    try:
+        response = requests.post(api_url, headers={
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }, json={
+            'model': model,
+            'messages': [
+                {'role': 'system', 'content': 'You rewrite scholar bowl questions to remove the answer from the text. Return ONLY the rewritten question.'},
+                {'role': 'user', 'content': prompt}
+            ],
+            'temperature': 0.3,
+            'max_tokens': 600
+        })
+        if response.status_code == 200:
+            rewritten = response.json()['choices'][0]['message']['content'].strip()
+            rewritten = rewritten.strip('"').strip("'")
+            if _validate_answer_not_in_question(rewritten, answer) and _validate_question_completeness(rewritten):
+                print(f"REPHRASED tossup for answer '{answer}' — answer removed successfully")
+                return rewritten
+            else:
+                print(f"REPHRASE FAILED for '{answer}' — answer still present or incomplete after rewrite")
+                return None
+    except Exception as e:
+        print(f"REPHRASE ERROR for '{answer}': {e}")
+    return None
+
+
+def _rephrase_bonus(bonus_question: str, answer: str, api_key: str, api_url: str, model: str) -> str:
+    prompt = f"""Rewrite this scholar bowl bonus question so the answer "{answer}" does NOT appear in the question text.
+
+ORIGINAL: {bonus_question}
+ANSWER: {answer}
+
+Replace "{answer}" with indirect references. Return ONLY the rewritten question, nothing else."""
+
+    try:
+        response = requests.post(api_url, headers={
+            'Authorization': f'Bearer {api_key}',
+            'Content-Type': 'application/json'
+        }, json={
+            'model': model,
+            'messages': [
+                {'role': 'system', 'content': 'Rewrite the question to remove the answer from the text. Return ONLY the rewritten question.'},
+                {'role': 'user', 'content': prompt}
+            ],
+            'temperature': 0.3,
+            'max_tokens': 200
+        })
+        if response.status_code == 200:
+            rewritten = response.json()['choices'][0]['message']['content'].strip().strip('"').strip("'")
+            if _validate_answer_not_in_question(rewritten, answer):
+                return rewritten
+    except Exception:
+        pass
+    return None
 
 
 def get_recent_answers(user_id: int, limit: int = 60) -> List[str]:
@@ -647,12 +725,22 @@ Generate {num_tossups} toss-up + bonus sets about {topic}."""
             tossup = r.get('tossup', {})
             tossup_answer = tossup.get('answer', '')
             tossup_text = tossup.get('question', '')
-            if not _validate_question_completeness(tossup_text):
+            if not _validate_question_completeness(tossup_text, strict=False):
                 print(f"REJECTED incomplete tournament tossup: {tossup_text[:80]}...")
                 continue
             if not _validate_answer_not_in_question(tossup.get('question', ''), tossup_answer):
-                print(f"REJECTED tournament tossup: Answer '{tossup_answer}' found in question text.")
-                continue
+                try:
+                    rephrased = _rephrase_to_remove_answer(tossup_text, tossup_answer, api_key, api_url, model)
+                    if rephrased and _validate_answer_not_in_question(rephrased, tossup_answer):
+                        tossup['question'] = rephrased
+                        r['tossup'] = tossup
+                        print(f"REPHRASED tournament tossup to remove answer '{tossup_answer}'")
+                    else:
+                        print(f"REJECTED tournament tossup: Answer '{tossup_answer}' found in question text.")
+                        continue
+                except Exception:
+                    print(f"REJECTED tournament tossup: Answer '{tossup_answer}' found in question text.")
+                    continue
             if tossup_answer.lower() in all_seen_answers:
                 print(f"Skipping duplicate tournament tossup answer: {tossup_answer}")
                 continue
@@ -666,7 +754,16 @@ Generate {num_tossups} toss-up + bonus sets about {topic}."""
                 if _validate_answer_not_in_question(b.get('question', ''), b.get('answer', '')):
                     clean_bonus.append(b)
                 else:
-                    print(f"REJECTED tournament bonus: Answer '{b.get('answer')}' found in question text.")
+                    try:
+                        rephrased_b = _rephrase_bonus(b.get('question', ''), b.get('answer', ''), api_key, api_url, model)
+                        if rephrased_b and _validate_answer_not_in_question(rephrased_b, b.get('answer', '')):
+                            b['question'] = rephrased_b
+                            clean_bonus.append(b)
+                            print(f"REPHRASED tournament bonus to remove answer '{b.get('answer')}'")
+                        else:
+                            print(f"REJECTED tournament bonus: Answer '{b.get('answer')}' found in question text.")
+                    except Exception:
+                        print(f"REJECTED tournament bonus: Answer '{b.get('answer')}' found in question text.")
             r['bonus'] = clean_bonus
             validated_rounds.append(r)
         if not validated_rounds:
@@ -874,22 +971,14 @@ Score each category 1-10. Be constructive but honest."""
     return data
 
 
-def generate_packet(packet_type, difficulty, user_id=None):
-    api_key = os.environ.get('TOGETHER_API_KEY')
-    api_url = os.environ.get('TOGETHER_URL', 'https://api.together.xyz/v1/chat/completions')
-    model = os.environ.get('MODEL', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo')
-    if not api_key:
-        raise ValueError("TOGETHER_API_KEY not found")
-
-    recent_answers = get_recent_answers(user_id, limit=100) if user_id else []
-    avoid_instruction = ""
-    if recent_answers:
-        avoid_instruction = f"\n\nCRITICAL - DO NOT REUSE THESE ANSWERS (the user has already seen them): {', '.join(recent_answers[:50])}.\nGenerate questions about completely different subjects, people, events, works, and concepts."
-
-    categories = ["Science", "History", "Literature", "Fine Arts", "Social Science", "Geography", "Current Events", "Mythology"]
+def _generate_packet_batch(api_key, api_url, model, packet_type, difficulty, count, categories, avoid_instruction, collected_answers=None):
+    if collected_answers is None:
+        collected_answers = set()
+    extra_avoid = ""
+    if collected_answers:
+        extra_avoid = f"\nAlso avoid these answers already in the packet: {', '.join(list(collected_answers)[:30])}."
 
     if packet_type == 'lightning':
-        count = 30
         prompt = f"""Generate {count} short-answer lightning round questions for a scholar bowl competition.
 Distribute evenly across these categories: {', '.join(categories)}.
 Difficulty: {difficulty}.
@@ -902,13 +991,22 @@ Rules:
 - Answers should be 1-3 words
 - Never include the answer in the question
 - Mix categories evenly
-- ALL {count} questions must have UNIQUE answers - no duplicate answers allowed{avoid_instruction}"""
+- ALL {count} questions must have UNIQUE answers - no duplicate answers allowed{avoid_instruction}{extra_avoid}"""
     else:
-        count = 10 if packet_type == 'half' else 20
         prompt = f"""Generate {count} NAQT-style toss-up questions for a scholar bowl packet.
 Each toss-up should have a 3-part bonus question set.
 Distribute evenly across: {', '.join(categories)}.
 Difficulty: {difficulty}.
+
+ANSWER PROTECTION (MOST CRITICAL RULE):
+- The answer MUST NEVER appear anywhere in the toss-up question text. This is the #1 rule.
+- Do NOT mention the answer's name, title, or any form of it in any sentence.
+- Use ONLY indirect references: "This scientist...", "This novel...", "This country...", "He...", "She...", "It..."
+- WRONG: "Werner Heisenberg developed the uncertainty principle. Name this physicist." (answer IN question!)
+- RIGHT: "This physicist developed the uncertainty principle in 1927. Name this German physicist." (answer never appears)
+- WRONG: "Claude Monet painted Water Lilies. Name this painter." (answer IN question!)
+- RIGHT: "This Impressionist painter is known for a series depicting water lilies. Name this French artist." (answer never appears)
+- For bonus questions too: NEVER include the answer word in the question sentence.
 
 Return ONLY a JSON array:
 [{{
@@ -924,8 +1022,15 @@ Return ONLY a JSON array:
   ]
 }}]
 
-CRITICAL: Never include answers in question text. Use pyramidal structure for toss-ups.
-ALL {count} toss-ups must have UNIQUE answers - no duplicate answers allowed.{avoid_instruction}"""
+CRITICAL RULES:
+- The answer must NEVER appear in the toss-up or bonus question text.
+- Use pyramidal structure for toss-ups (hard clues first, easy last).
+- Start each toss-up with "This [type]..." format.
+- EVERY toss-up MUST end with a complete closing sentence: "Name this [type]." or "Identify this [type]."
+- NEVER leave a question incomplete or cut off mid-sentence.
+- ALL {count} toss-ups must have UNIQUE answers - no duplicate answers allowed.{avoid_instruction}{extra_avoid}"""
+
+    token_limit = 4000 if packet_type == 'lightning' else (8000 if count <= 10 else 12000)
 
     response = requests.post(api_url, headers={
         'Authorization': f'Bearer {api_key}',
@@ -933,11 +1038,11 @@ ALL {count} toss-ups must have UNIQUE answers - no duplicate answers allowed.{av
     }, json={
         'model': model,
         'messages': [
-            {'role': 'system', 'content': 'You generate competition-ready scholar bowl packets. Return ONLY valid JSON arrays.'},
+            {'role': 'system', 'content': 'You generate competition-ready scholar bowl packets. Return ONLY valid JSON arrays. Every toss-up question must be complete and end with "Name this..." or "Identify this..." — never truncate.'},
             {'role': 'user', 'content': prompt}
         ],
         'temperature': 0.8,
-        'max_tokens': 4000
+        'max_tokens': token_limit
     })
 
     if response.status_code != 200:
@@ -954,40 +1059,153 @@ ALL {count} toss-ups must have UNIQUE answers - no duplicate answers allowed.{av
     for q in data:
         if packet_type == 'lightning':
             if not _validate_answer_not_in_question(q.get('question', ''), q.get('answer', '')):
-                print(f"REJECTED packet question: Answer '{q.get('answer')}' found in question text.")
-                continue
+                rephrased = _rephrase_bonus(q.get('question', ''), q.get('answer', ''), api_key, api_url, model)
+                if rephrased:
+                    q['question'] = rephrased
+                    print(f"REPHRASED lightning question for answer '{q.get('answer')}'")
+                else:
+                    print(f"DROPPED lightning question: couldn't fix answer '{q.get('answer')}' in text.")
+                    continue
         else:
             if not _validate_question_completeness(q.get('tossup', '')):
-                print(f"REJECTED incomplete packet tossup: {q.get('tossup', '')[:80]}...")
+                print(f"DROPPED incomplete packet tossup: {q.get('tossup', '')[:80]}...")
                 continue
             if not _validate_answer_not_in_question(q.get('tossup', ''), q.get('tossup_answer', '')):
-                print(f"REJECTED packet tossup: Answer '{q.get('tossup_answer')}' found in tossup text.")
-                continue
+                rephrased = _rephrase_to_remove_answer(q.get('tossup', ''), q.get('tossup_answer', ''), api_key, api_url, model)
+                if rephrased:
+                    q['tossup'] = rephrased
+                else:
+                    print(f"DROPPED tossup: couldn't fix answer '{q.get('tossup_answer')}' in text.")
+                    continue
             bonus_parts = q.get('bonus_parts', [])
-            clean_bonus = [b for b in bonus_parts if _validate_answer_not_in_question(b.get('question', ''), b.get('answer', ''))]
+            fixed_bonus = []
             for b in bonus_parts:
-                if b not in clean_bonus:
-                    print(f"REJECTED packet bonus: Answer '{b.get('answer')}' found in bonus text.")
-            q['bonus_parts'] = clean_bonus
+                if _validate_answer_not_in_question(b.get('question', ''), b.get('answer', '')):
+                    fixed_bonus.append(b)
+                else:
+                    rephrased = _rephrase_bonus(b.get('question', ''), b.get('answer', ''), api_key, api_url, model)
+                    if rephrased:
+                        b['question'] = rephrased
+                        fixed_bonus.append(b)
+                        print(f"REPHRASED bonus for answer '{b.get('answer')}'")
+                    else:
+                        print(f"DROPPED bonus part: couldn't fix answer '{b.get('answer')}' in text.")
+            q['bonus_parts'] = fixed_bonus
         validated_data.append(q)
-    data = validated_data
+
+    return validated_data
+
+
+def _ensure_packet_log_table():
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute('''CREATE TABLE IF NOT EXISTS packet_generation_log (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER NOT NULL,
+        packet_type TEXT NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    )''')
+    conn.commit()
+    conn.close()
+
+
+def get_user_packet_count_today(user_id):
+    from datetime import date
+    _ensure_packet_log_table()
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    today = date.today().isoformat()
+    cursor.execute("SELECT COUNT(*) FROM packet_generation_log WHERE user_id = ? AND date(created_at) = ?", (user_id, today))
+    count = cursor.fetchone()[0]
+    conn.close()
+    return count
+
+
+def record_packet_generation(user_id, packet_type='half'):
+    _ensure_packet_log_table()
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+    cursor.execute("INSERT INTO packet_generation_log (user_id, packet_type) VALUES (?, ?)", (user_id, packet_type))
+    conn.commit()
+    conn.close()
+
+
+def generate_packet(packet_type, difficulty, user_id=None):
+    api_key = os.environ.get('TOGETHER_API_KEY')
+    api_url = os.environ.get('TOGETHER_URL', 'https://api.together.xyz/v1/chat/completions')
+    model = os.environ.get('MODEL', 'meta-llama/Meta-Llama-3.1-8B-Instruct-Turbo')
+    if not api_key:
+        raise ValueError("TOGETHER_API_KEY not found")
 
     if user_id:
-        all_seen = get_all_user_answers(user_id)
-        if packet_type == 'lightning':
-            data = [q for q in data if q.get('answer', '').lower() not in all_seen]
-        else:
-            data = [q for q in data if q.get('tossup_answer', '').lower() not in all_seen]
-        seen_answers = set()
-        unique_data = []
-        for q in data:
-            ans = (q.get('answer') or q.get('tossup_answer', '')).lower()
-            if ans not in seen_answers:
-                seen_answers.add(ans)
-                unique_data.append(q)
-        data = unique_data
+        today_count = get_user_packet_count_today(user_id)
+        if today_count >= MAX_PACKETS_PER_DAY:
+            raise ValueError(f"Daily packet limit reached ({MAX_PACKETS_PER_DAY} packets per day). Try again tomorrow!")
 
-    return data
+    recent_answers = get_recent_answers(user_id, limit=100) if user_id else []
+    avoid_instruction = ""
+    if recent_answers:
+        avoid_instruction = f"\n\nCRITICAL - DO NOT REUSE THESE ANSWERS (the user has already seen them): {', '.join(recent_answers[:50])}.\nGenerate questions about completely different subjects, people, events, works, and concepts."
+
+    categories = ["Science", "History", "Literature", "Fine Arts", "Social Science", "Geography", "Current Events", "Mythology"]
+
+    if packet_type == 'lightning':
+        target_count = 30
+    elif packet_type == 'half':
+        target_count = 10
+    else:
+        target_count = 20
+
+    all_seen = get_all_user_answers(user_id) if user_id else set()
+    collected = []
+    collected_answers = set()
+    collected_categories = {}
+    max_attempts = 3
+
+    for attempt in range(max_attempts):
+        needed = target_count - len(collected)
+        if needed <= 0:
+            break
+
+        request_count = needed + 3
+
+        underrepresented = [c for c in categories if collected_categories.get(c, 0) < (target_count // len(categories))]
+        if underrepresented and attempt > 0:
+            avoid_instruction_with_diversity = avoid_instruction + f"\nFocus on these underrepresented categories: {', '.join(underrepresented)}."
+        else:
+            avoid_instruction_with_diversity = avoid_instruction
+
+        print(f"Packet attempt {attempt + 1}/{max_attempts}: requesting {request_count} to fill {needed} remaining slots")
+
+        try:
+            batch = _generate_packet_batch(api_key, api_url, model, packet_type, difficulty, request_count, categories, avoid_instruction_with_diversity, collected_answers)
+        except Exception as e:
+            print(f"Packet batch attempt {attempt + 1} failed: {e}")
+            continue
+
+        for q in batch:
+            if len(collected) >= target_count:
+                break
+            ans_key = (q.get('answer') or q.get('tossup_answer', '')).lower()
+            if ans_key in collected_answers:
+                continue
+            if ans_key in all_seen:
+                continue
+            collected_answers.add(ans_key)
+            cat = q.get('category', 'General')
+            collected_categories[cat] = collected_categories.get(cat, 0) + 1
+            collected.append(q)
+
+        if len(collected) >= target_count:
+            break
+
+    for i, q in enumerate(collected):
+        q['number'] = i + 1
+
+    if user_id and len(collected) >= (target_count // 2):
+        record_packet_generation(user_id, packet_type)
+
+    return collected
 
 
 def analyze_question_autopsy(question_text, correct_answer, user_answer, topic):
