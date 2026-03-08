@@ -33,12 +33,12 @@ function prefillFromURL() {
     const userAnswer = params.get('user_answer');
     const topic = params.get('topic');
 
-    if (question) document.getElementById('autopsy-question').value = decodeURIComponent(question);
-    if (answer) document.getElementById('autopsy-answer').value = decodeURIComponent(answer);
-    if (userAnswer) document.getElementById('autopsy-user-answer').value = decodeURIComponent(userAnswer);
-    if (topic) document.getElementById('autopsy-topic').value = decodeURIComponent(topic);
+    if (question) document.getElementById('autopsy-question').value = question;
+    if (answer) document.getElementById('autopsy-answer').value = answer;
+    if (userAnswer) document.getElementById('autopsy-user-answer').value = userAnswer;
+    if (topic) document.getElementById('autopsy-topic').value = topic;
 
-    if (question && answer && userAnswer) {
+    if (question && answer) {
         analyzeQuestion();
     }
 }
@@ -53,8 +53,8 @@ async function analyzeQuestion() {
 
     errorDiv.textContent = '';
 
-    if (!questionText || !answer || !userAnswer) {
-        errorDiv.textContent = 'Please fill in the question, correct answer, and your wrong answer.';
+    if (!questionText || !answer) {
+        errorDiv.textContent = 'Please fill in the question and correct answer.';
         return;
     }
 
@@ -149,10 +149,7 @@ function checkRecoveryAnswer(idx, correctAnswer) {
         return;
     }
 
-    const userNorm = normalizeAnswer(userAnswer);
-    const correctNorm = normalizeAnswer(correctAnswer);
-
-    if (userNorm === correctNorm || correctNorm.includes(userNorm) || userNorm.includes(correctNorm)) {
+    if (fuzzyMatch(userAnswer, correctAnswer)) {
         feedback.textContent = 'Correct! ' + correctAnswer;
         feedback.className = 'recovery-feedback recovery-correct';
     } else {
